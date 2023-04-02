@@ -26,11 +26,11 @@ Then navigate to the Examples folder and run the codes.
 
 ## 3. Examples
 
-TBA.
+A Jupyter Notebook example to execute the code is provided in the folder [Examples](https://github.com/Aerosol-Lab/Bidimensional_TDMA_inversion/tree/main/Examples).
 
 ## 4. Documentation
 
-TBA.
+More documentation including the reference article will be included later. For the moment the examples are self-explained.
 
 ## 5. License
 
