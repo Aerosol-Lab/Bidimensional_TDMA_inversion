@@ -8,7 +8,7 @@ This repository contains the codes necessary for Tandem Differential Mobility An
 
 Download the current version of the code
 
-    git clone git@github.com:Aerosol-Lab/
+    git clone git@github.com:Aerosol-Lab/Bidimensional_TDMA_inversion.git
     
 Python codes requiere installing some common libraries such as numpy, matplotlib, and pandas.
 
