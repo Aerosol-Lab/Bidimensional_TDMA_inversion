@@ -10,7 +10,19 @@ Download the current version of the code
 
     git clone git@github.com:Aerosol-Lab/Bidimensional_TDMA_inversion.git
     
-Python codes requiere installing some common libraries such as numpy, matplotlib, and pandas.
+Then install the code by running:
+	
+    make
+	
+It will create a virtual environment called venv. Activate the venv by running:
+
+    source venv/bin/activate
+
+For Jupyter Notebook users just run:
+
+    jupyter notebook
+
+Then navigate to the Examples folder and run the codes.
 
 ## 3. Examples
 
