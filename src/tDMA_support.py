@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-from linker import *
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
 import re
 from scipy.signal import savgol_filter
 import os
@@ -14,6 +17,9 @@ from scipy.interpolate import griddata
 
 import matplotlib.font_manager
 from matplotlib.ticker import AutoMinorLocator
+
+import DMA_tDMA_inversion_tools
+import Aerosol_tools
 
 
 ##---------------------------------------------------##
@@ -434,15 +440,13 @@ def Plot_ESPV(espV,V2s, measurements_data_avg,
         V2 = V2s[i]
         sel_md = data[data[sort_col]==V2]
         if((len(sel_md) > 1) & (i%skip == 0)):
-            V1,Dp,R,Zp = sel_md.V1,sel_md.Dp1,sel_md[column],sel_md["Mobility (m2/s/V)"]
+            R = sel_md[column]
             if (D_legend):
                 legend = "$D_{p}=$ "+str(round(sel_md.Dp2.values[0],1))+" nm"
             else:
                 legend = "$V_2=$ "+str(V2/1000)+" kV"
-            if(row == "Zp"):
-                x = Zp
-            elif(row == "V1"):
-                x = V1
+            if(row == "V1"):
+                x = sel_md.V1
             else:
                 x = sel_md[row]
             if(line):
@@ -456,13 +460,13 @@ def Plot_ESPV(espV,V2s, measurements_data_avg,
                     plt.plot(x, R, ".-", linewidth=1, label=legend)
             else:
                 plt.plot(x, R, "o", label=legend)
-            del sel_md,V1,Dp,R,Zp
+            del sel_md,R
     
     if(column == "R"):
         plt.ylabel("Particle size dist., $dR$ (cm⁻³)", fontsize=20)
     elif(column == "z1_rough" or column == "z1"):
         plt.ylabel("Elementary charges (-)", fontsize=20)
-    elif(column == "N1p_nor"):
+    elif((column == "N1p_nor") or (column == "f1")):
         plt.ylabel("Charge fraction, f (-)", fontsize=20)
     else:
         plt.ylabel("Particle size dist., $dN$ (cm⁻³)", fontsize=20)
@@ -502,18 +506,21 @@ def Plot_profiles(data2, espV, Dp_fit, V2_vec, export=True,zmax=300,xmax=40):
     
     z1_raw = data2['z1_raw'].values
     N_raw = data2['R'].values
-    plt.plot(z1_raw, N_raw/np.sum(N_raw),".-k",linewidth=0.5,label="Method 1")
+    f_raw = Get_charge_fraction(z1_raw, N_raw, zmax=zmax)
+    plt.plot(z1_raw, f_raw,".-k",linewidth=0.5,label="Raw approximation")
     
-    z_vec = data2['zDMA1'].values
+    zDMA1 = data2['zDMA1'].values
     N1p = data2['N1p'].values
-    plt.plot(z_vec, N1p/np.sum(N1p),". b",label="Method 2")
-    xs,Rs = Spline(z_vec, N1p/np.sum(N1p))
+    f1p = Get_charge_fraction(zDMA1, N1p, zmax=zmax)
+    plt.plot(zDMA1, f1p,". b",label="2-steps inversion")
+    xs,Rs = Spline(zDMA1, f1p)
     plt.plot(xs,Rs,"-b",linewidth=0.5)
     
     z_vec = data2['z1'].values
     N_deconv = data2['N_deconv'].values
-    plt.plot(z_vec, N_deconv/np.sum(N_deconv),"o r",label="2d inversion")
-    xs,Rs = Spline(z_vec, N_deconv/np.sum(N_deconv))
+    f1 = Get_charge_fraction(z_vec, N_deconv, zmax=zmax)
+    plt.plot(z_vec, f1,"o r",label="Deconvolution")
+    xs,Rs = Spline(z_vec, f1)
     plt.plot(xs,Rs,"-r",linewidth=2)
     
     plt.title('Charge profile, ESP V='+str(espV)+' kV, $D_p=$'+str(round(Dp_fit*1e+09,1))+' nm', fontsize=20)
