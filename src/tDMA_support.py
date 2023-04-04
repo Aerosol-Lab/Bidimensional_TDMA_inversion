@@ -523,7 +523,7 @@ def Plot_profiles(data2, espV, Dp_fit, V2_vec, export=True,zmax=300,xmax=40):
     xs,Rs = Spline(z_vec, f1)
     plt.plot(xs,Rs,"-r",linewidth=2)
     
-    plt.title('Charge profile, ESP V='+str(espV)+' kV, $D_p=$'+str(round(Dp_fit*1e+09,1))+' nm', fontsize=20)
+    plt.title('Charge profile, ESP V='+str(espV)+' kV, $D_p=$'+str(round(Dp_fit,1))+' nm', fontsize=20)
     plt.ylabel('Charge fraction, f$_1$ (-)', fontsize=18)
     plt.xlabel('Elementary charges, z (-)', fontsize=18)
     plt.xlim([0,xmax])
